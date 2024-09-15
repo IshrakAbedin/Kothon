@@ -1,0 +1,35 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fls
+*.fdb_latexmk
+*.log
+*.lol
+*.lot
+*.out
+*.pdf
+*.synctex.gz
+*.toc
+*.xdv
+
+# LaTeX auxiliary files
+*.nav
+*.snm
+*.vrb
+
+# Backup files
+*~
+*.bak
+*.tmp
+
+# Editor-specific files
+.vscode/
+
+# Miscellaneous
+*.pdfsync
+*.dvi
+*.ps
+*.eps
+*.toc

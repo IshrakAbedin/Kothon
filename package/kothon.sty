@@ -1,0 +1,167 @@
+% MIT License
+% 
+% Copyright (c) 2024 Mohammad Ishrak Abedin
+% 
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+% 
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
+%
+% Mohammad Ishrak Abedin
+% <ishrak.abedin.a1@gmail.com> <ishrakabedin@iut-dhaka.edu>
+
+% Guard for non-luaLaTeX compilers
+\RequirePackage{ifluatex}
+\ifluatex\relax\else
+    % If false, give an error message and stop the compilation
+    \PackageError{kothon}{This class requires LuaLaTeX}{Kindly use LuaLaTeX to compile this document}
+    \stop
+\fi
+
+% LaTeX format Specifier
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{kothon}[2024/09/15 v0.2 LaTeX package that simplifies basic Bangla typesetting and leverages Avro Phonetic typing in LaTeX for writing Bangla]
+
+% Required package loading
+\RequirePackage{luacode}
+\RequirePackage{fontspec}
+\RequirePackage{polyglossia}
+\RequirePackage{enumitem}
+
+% Setting `bangla` as an alias for `bengali`
+\setlanguagealias{bengali}{bangla}
+
+% Load Lua backend for Avro Phonetic support
+\directlua{ dofile("kothon.lua") }
+
+%   A Wrapper command to allow transliteration using LuaAvroPhonetic
+%
+%   Mandatory Arg1: The text to be transliterated, escapes basic
+%   commands to allow bolding and underlinging
+%
+%   Usage: \avro{BHasha hOk unmukto!}
+\newcommand{\avro}[1]{%
+    \luaexec{tex.print(AvroLaTeX.parse(\luastring{\detokenize{#1}}))}%
+}
+
+%   A command to set Bangla as the second language of the document.
+%   Allows writing Bangla inside  \textbangla{...}, \textbengali{...}, 
+%   etc. commands and \begin{bangla} ... \end{bangla}, \begin{bengali} 
+%   ... \end{bengali}, etc. environments. Alternatively, you can switch
+%   current language context to Bangla by using \bangla or \Bengali.
+%
+%   Optional Arg1: Bangla font to be used [Default: Noto Sans Bengali]
+%   Optional Arg2: Additional font parameters
+%   [Default: Renderer=HarfBuzz, Script=Bengali]
+%
+%   Usage: \setbanglaother[Noto Serif Bengali]
+\NewDocumentCommand{\setbanglaother}{
+    O{Noto Sans Bengali}
+    O{Renderer=HarfBuzz, Script=Bengali}
+}{
+    \newfontfamily\bengalifont{#1}[#2]
+    \setotherlanguage{bengali}
+}
+
+%   A command to set Bangla as the primary language of the document
+%   with English as the second. Everything including document part
+%   and enumeration counter (Arabic only) shifts to Bangla.
+%   Allows writing English inside \textenglish{...} command and 
+%   \begin{english} ... \end{english} environment. You can switch
+%   language context to English using \english.
+%
+%   Optional Arg1: Bangla font to be used [Default: Noto Sans Bengali]
+%   Optional Arg2: English font to be used [Default: Latin Modern Roman]
+%   Optional Arg2: Additional font parameters
+%   [Default: Renderer=HarfBuzz, Script=Bengali]
+%
+%   Usage: \setbanglamain[Noto Serif Bengali][Fira Sans]
+\NewDocumentCommand{\setbanglamain}{
+    O{Noto Sans Bengali}
+    O{Latin Modern Roman}
+    O{Renderer=HarfBuzz, Script=Bengali}
+}{
+    \setmainfont{#1}[#3]
+    \newfontfamily\englishfont{#2}
+    \setmainlanguage[numerals=Bengali, changecounternumbering=true]{bengali}
+    \setotherlanguage{english}
+}
+
+%   A command to similar to the \setbanglamain command with extended
+%   parameters for different types of fonts (main, serif, mono).
+%
+%   Optional Arg1: Bangla Main font to be used [Default: Noto Serif Bengali]
+%   Optional Arg2: Bangla Sans font to be used [Default: Noto Sans Bengali]
+%   Optional Arg3: Bangla Mono font to be used [Default: Noto Sans Bengali]
+%   Optional Arg4: English font to be used [Default: Latin Modern Roman]
+%   Optional Arg5: Additional font parameters
+%   [Default: Renderer=HarfBuzz, Script=Bengali]
+%
+%   Usage: \setbanglamainx[Noto Serif Bengali][Noto Sans Bengali]
+%   [Noto Serif Bengali][Fira Sans]
+\NewDocumentCommand{\setbanglamainx}{
+    O{Noto Serif Bengali}
+    O{Noto Sans Bengali}
+    O{Noto Sans Bengali}
+    O{Latin Modern Roman}
+    O{Renderer=HarfBuzz, Script=Bengali}
+}{
+    \setmainfont{#1}[#5]
+    \setsansfont{#2}[#5]
+    \setmonofont{#3}[#5]
+    \newfontfamily\englishfont{#4}
+    \setmainlanguage[numerals=Bengali, changecounternumbering=true]{bengali}
+    \setotherlanguage{english}
+}
+
+%   A command to similar to the \setbanglamain command with universal
+%   font support for different types of fonts (main, serif, mono).
+%
+%   Optional Arg1: Main font to be used [Default: FreeSerif]
+%   Optional Arg2: Sans font to be used [Default: FreeSans]
+%   Optional Arg3: Mono Serif font to be used [Default: FreeMono]
+%   Optional Arg4: Additional font parameters
+%   [Default: Renderer=HarfBuzz, Script=Bengali]
+%
+%   Usage: \setbanglamainu[FreeSerif][FreeSans]
+%   [FreeMono][Renderer=HarfBuzz]
+%
+%   !!! USAGE NOT RECOMMENDED
+\NewDocumentCommand{\setbanglamainu}{
+    O{FreeSerif}
+    O{FreeSans}
+    O{FreeMono}
+    O{Renderer=HarfBuzz, Script=Bengali}
+}{
+    \setmainfont{#1}[#4]
+    \setsansfont{#2}[#4]
+    \setmonofont{#3}[#4]
+    \setmainlanguage[numerals=Bengali, changecounternumbering=true]{bengali}
+    \setotherlanguage{english}
+}
+
+%   A legal list. Since alphabetic numbering does not work properly
+%   with Bangla, this list numbers as 1. -> 1.1. -> 1.1.1. -> ...
+%   Ideal hack to be used when Bangla is set as the main font.
+%
+%   Usage:
+%       \begin{llist}
+%           \item Item 1 
+%           \item Item 2 
+%           ... 
+%       \end{llist}
+\newlist{llist}{enumerate}{10}
+\setlist[llist]{label*=\arabic*.}

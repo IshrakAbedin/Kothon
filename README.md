@@ -106,7 +106,7 @@ Now in your main document, you can write Bangla without requiring any command or
 \end{document}
 ```
 
-#### Alternative Document Level Setups
+#### Alternative document level setups
 Bangla fonts do not really have much bold, italic, etc. variations in all the cases. On top of that, monospaced Bangla fonts are rare. However, if you want to set the whole document with different types of Bangla fonts, you can use:
 
 ```latex

@@ -1,7 +1,7 @@
 # Licensing Information
 
 This repository contains files licensed under multiple licenses.
-[`kothon.lua`](./package/kothon.lua) is released under the terms of the
+"kothon.lua" is released under the terms of the
 Mozilla Public License 2.0. Rest of the files are licensed under MIT license.
 Please refer to the headers in each file for specific licensing information.
 

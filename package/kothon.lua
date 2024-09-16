@@ -2039,3 +2039,174 @@ function AvroLaTeX.parse(str)
     end
     return table.concat(segments)
 end
+
+-- Class for Bangla Enumerate
+
+local Enumerator = {}
+Enumerator.__index = Enumerator
+
+function Enumerator:new(formatting)
+    local instance = setmetatable({}, Enumerator)
+    instance.formatting = formatting or { "s", "a", "i" }
+    instance.stages = {}
+    instance.currentStage = 0
+    return instance
+end
+
+function Enumerator:ToRoman(num, lower)
+    if lower == nil then lower = true end
+    -- Define a table mapping decimal values to Roman numerals
+    local romanTable = {
+        { 1000, "M" },
+        { 900,  "CM" },
+        { 500,  "D" },
+        { 400,  "CD" },
+        { 100,  "C" },
+        { 90,   "XC" },
+        { 50,   "L" },
+        { 40,   "XL" },
+        { 10,   "X" },
+        { 9,    "IX" },
+        { 5,    "V" },
+        { 4,    "IV" },
+        { 1,    "I" }
+    }
+
+    -- Initialize an empty string to store the result
+    local roman = ""
+
+    -- Loop through the table and construct the Roman numeral
+    for _, value in ipairs(romanTable) do
+        local val, symbol = value[1], value[2]
+        while num >= val do
+            roman = roman .. symbol
+            num = num - val
+        end
+    end
+
+    if (lower) then roman = roman:lower() end
+    return roman
+end
+
+function Enumerator:ToAlphabet(num, lower)
+    if lower == nil then lower = true end
+    -- Ensure the number wraps around after 26
+    local alphabetIndex = (num - 1) % 26 + 1
+    -- Convert the number to the corresponding letter
+    local letter = string.char(("A"):byte(1) + alphabetIndex - 1)
+    if (lower) then letter = letter:lower() end
+    return letter
+end
+
+function Enumerator:ToBanglaAlphabet(num, consonants)
+    if consonants == nil then consonants = true end
+    -- Define the Bangla alphabet as a table of characters
+    local banglaAlphabet = {}
+    if consonants then
+        banglaAlphabet = {
+            "ক", "খ", "গ", "ঘ", "ঙ",
+            "চ", "ছ", "জ", "ঝ", "ঞ",
+            "ট", "ঠ", "ড", "ঢ", "ণ",
+            "ত", "থ", "দ", "ধ", "ন",
+            "প", "ফ", "ব", "ভ", "ম",
+            "য", "র", "ল", "শ", "ষ",
+            "স", "হ", "ড়", "ঢ়", "য়",
+            "ৎ", "ং", "ঃ", "ঁ"
+        }
+    else
+        banglaAlphabet = {
+            "অ", "আ", "ই", "ঈ", "উ", "ঊ",
+            "ঋ", "এ", "ঐ", "ও", "ঔ"
+        }
+    end
+
+    -- Ensure the number wraps around after the length of the Bangla alphabet
+    local alphabetIndex = (num - 1) % #banglaAlphabet + 1
+
+    return banglaAlphabet[alphabetIndex]
+end
+
+function Enumerator:ToBanglaNumerals(num)
+    -- Define a mapping from English numerals to Bangla numerals
+    local englishToBangla = {
+        ["0"] = "০",
+        ["1"] = "১",
+        ["2"] = "২",
+        ["3"] = "৩",
+        ["4"] = "৪",
+        ["5"] = "৫",
+        ["6"] = "৬",
+        ["7"] = "৭",
+        ["8"] = "৮",
+        ["9"] = "৯"
+    }
+
+    -- Initialize an empty result string
+    local result = {}
+
+    -- Iterate over each character in the input string
+    for char in tostring(num):gmatch(".") do
+        -- If the character is a digit, map it to the Bangla numeral
+        if englishToBangla[char] then
+            table.insert(result, englishToBangla[char])
+        else
+            -- If it's not a digit, keep the character unchanged
+            table.insert(result, char)
+        end
+    end
+
+    return table.concat(result)
+end
+
+function Enumerator:NextStage()
+    self.currentStage = self.currentStage + 1
+    self.stages[self.currentStage] = 1
+end
+
+function Enumerator:PreviousStage()
+    self.stages[self.currentStage] = 0
+    self.currentStage = self.currentStage - 1
+end
+
+function Enumerator:NextValue()
+    local value = self.stages[self.currentStage]
+    self.stages[self.currentStage] = self.stages[self.currentStage] + 1
+    return value
+end
+
+function Enumerator:NextValueFormatted()
+    local fIndex = ((self.currentStage - 1) % #self.formatting) + 1
+    local format = self.formatting[fIndex]
+
+    if (format == "n" or format == "N") then
+        return string.format("%s.", self:NextValue())
+    elseif (format == "s" or format == "S") then
+        return string.format("%s.", self:ToBanglaNumerals(self:NextValue()))
+    elseif (format == "a") then
+        return string.format("(%s)", self:ToAlphabet(self:NextValue(), true))
+    elseif (format == "A") then
+        return string.format("(%s)", self:ToAlphabet(self:NextValue(), false))
+    elseif (format == "b") then
+        return string.format("(%s)", self:ToBanglaAlphabet(self:NextValue(), true))
+    elseif (format == "B") then
+        return string.format("(%s)", self:ToBanglaAlphabet(self:NextValue(), false))
+    elseif (format == "i") then
+        return string.format("%s.", self:ToRoman(self:NextValue(), true))
+    elseif (format == "I") then
+        return string.format("%s.", self:ToRoman(self:NextValue(), false))
+    else
+        return ("O)")
+    end
+end
+
+function Enumerator:Reset()
+    self.stages = {}
+    self.currentStage = 0
+end
+
+function Enumerator:GetCurrentStage()
+    return self.currentStage
+end
+
+-- Initializion of Bangla enum
+BNenum = Enumerator:new({ "s", "b", "B" })

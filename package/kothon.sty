@@ -165,3 +165,34 @@
 %       \end{llist}
 \newlist{llist}{enumerate}{10}
 \setlist[llist]{label*=\arabic*.}
+
+%   A list utilizing Lua backend to generate numbers and alphabets in
+%   Bangla. First levels are Bangla numbers, second levels are Bangla
+%   consonants, third levels are Bangla vowels. If there are more
+%   levels, the patterns will repeat. Works only inside a Bangla
+%   environment.
+%
+%   Usage:
+%   \begin{bnenum}
+%       \bnitem \avro{eTa \underline{ek}}
+%       \bnitem \avro{eTa \underline{dui}}
+%       \begin{bnenum}
+%           \bnitem \avro{eTa bhitore, tai \underline{k}}
+%           \bnitem \avro{eTa bhitore, tai \underline{kh}}
+%       \end{bnenum}
+%       \bnitem \avro{eTa abar \underline{tin}}
+%       \bnitem \avro{eTa abar \underline{car}}
+%   \end{bnenum}
+\newenvironment{bnenum}
+{%
+    \directlua{ BNenum:NextStage() }%
+    \begin{enumerate}%
+}
+{%
+    \end{enumerate}%
+    \directlua{ BNenum:PreviousStage() }%
+}
+
+\newcommand{\bnitem}{%
+    \item[\directlua{ tex.print(BNenum:NextValueFormatted()) }]%
+}

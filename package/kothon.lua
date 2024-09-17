@@ -2045,12 +2045,39 @@ end
 local Enumerator = {}
 Enumerator.__index = Enumerator
 
-function Enumerator:new(formatting)
+-- Constructor
+function Enumerator:new(formatStr)
     local instance = setmetatable({}, Enumerator)
-    instance.formatting = formatting or { "s", "a", "i" }
+    instance.formatting = instance:ParseFormatStr( formatStr or "s, a, i" )
     instance.stages = {}
     instance.currentStage = 0
     return instance
+end
+
+function Enumerator:ParseFormatStr(str)
+    local results = {}
+    for item in string.gmatch(str, "[^,%s]+") do
+        table.insert(results, item)
+    end
+    return results
+end
+
+function Enumerator:SetFormatting(formatStr)
+    self.formatting = self:ParseFormatStr( formatStr or "s., (b), (B)" )
+end
+
+function Enumerator:GetTypeTemplate(inputStr)
+    -- Find the letter in the string
+    local type = inputStr:match("%a")  -- %a matches any letter (upper or lower case)
+
+    if not type then
+        return { type = "s", template = "%s."}
+    end
+
+    -- Replace the letter with `%s` in the original string
+    local template = inputStr:gsub(type, "%%s")
+
+    return { type = type, template = template}
 end
 
 function Enumerator:ToRoman(num, lower)
@@ -2176,26 +2203,28 @@ end
 
 function Enumerator:NextValueFormatted()
     local fIndex = ((self.currentStage - 1) % #self.formatting) + 1
-    local format = self.formatting[fIndex]
+    local tt = self:GetTypeTemplate(self.formatting[fIndex]) -- type and template
+    local type = tt.type
+    local template = tt.template
 
-    if (format == "n" or format == "N") then
-        return string.format("%s.", self:NextValue())
-    elseif (format == "s" or format == "S") then
-        return string.format("%s.", self:ToBanglaNumerals(self:NextValue()))
-    elseif (format == "a") then
-        return string.format("(%s)", self:ToAlphabet(self:NextValue(), true))
-    elseif (format == "A") then
-        return string.format("(%s)", self:ToAlphabet(self:NextValue(), false))
-    elseif (format == "b") then
-        return string.format("(%s)", self:ToBanglaAlphabet(self:NextValue(), true))
-    elseif (format == "B") then
-        return string.format("(%s)", self:ToBanglaAlphabet(self:NextValue(), false))
-    elseif (format == "i") then
-        return string.format("%s.", self:ToRoman(self:NextValue(), true))
-    elseif (format == "I") then
-        return string.format("%s.", self:ToRoman(self:NextValue(), false))
+    if (type == "n" or type == "N") then
+        return string.format(template, tostring(self:NextValue()))
+    elseif (type == "s" or type == "S") then
+        return string.format(template, self:ToBanglaNumerals(self:NextValue()))
+    elseif (type == "a") then
+        return string.format(template, self:ToAlphabet(self:NextValue(), true))
+    elseif (type == "A") then
+        return string.format(template, self:ToAlphabet(self:NextValue(), false))
+    elseif (type == "b") then
+        return string.format(template, self:ToBanglaAlphabet(self:NextValue(), true))
+    elseif (type == "B") then
+        return string.format(template, self:ToBanglaAlphabet(self:NextValue(), false))
+    elseif (type == "i") then
+        return string.format(template, self:ToRoman(self:NextValue(), true))
+    elseif (type == "I") then
+        return string.format(template, self:ToRoman(self:NextValue(), false))
     else
-        return ("O)")
+        return ("?)")
     end
 end
 
@@ -2208,5 +2237,5 @@ function Enumerator:GetCurrentStage()
     return self.currentStage
 end
 
--- Initializion of Bangla enum
-BNenum = Enumerator:new({ "s", "b", "B" })
+-- Initialize Bangla enum
+BNenum = Enumerator:new("s., (b), (B)")

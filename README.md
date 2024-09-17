@@ -36,7 +36,7 @@ Just including the package allows you to utilize Avro transliteration by using a
 \avro{BhaSHa hOk \textbf{unmukto}!}
 ```
 
-However, two things to notice. Unless you are in a Bangla environment, glyphs will not render properly. And, as of now, the `\avro` command only supports sentences or a single paragraph. It will not work with multiple paragraphs. The `\avro` command escapes basic commands within it, allowing you to bold and/or underline texts. However, it might fail in the case of complex commands. Also, if you want to create sections, subsections using transliteration, write similar to `\avro{\section{BhUmika}}` and not ~~`\section{\avro{BhUmika}}`~~.
+However, two things to notice. Unless you are in a Bangla environment, glyphs will not render properly. And, as of now, the `\avro` command only supports sentences or a single paragraph. It will not work with multiple paragraphs. The `\avro` command escapes basic commands within it, allowing you to bold and/or underline texts. However, it might fail in the case of complex commands, specially with argument(s) that are in English. Also, if you want to create sections, subsections, etc. using transliteration, write similar to `\avro{\section{BhUmika}}` and not ~~`\section{\avro{BhUmika}}`~~. Also keep in mind, the backtick symbol `` ` `` has special meaning in Avro Phonetic, so do the dollar `$` and the caret `^` symbols.
 
 ### Setting up Bangla environments
 
@@ -127,6 +127,54 @@ The commands that are provided with this package are written to make typesetting
 
 ### The Legal List
 While `polyglossia` can translate Arabic numerals to Bangla properly, it does not have support for alphabetic numerals, like a, b, c, d, etc. that are used in nested `enumerate`-like environments. To hack around this, the `llist` or legal list custom enumeration has been introduced. It numbers like $1. \rightarrow 1.1. \rightarrow 1.1.1.$ in different levels. So, if you are using Bangla as the main language, then using the legal list would result in having proper numbering. If you want Bangla alphabets in a list, you can always manually type `\item[\avro{k)}] ... \item[\avro{kh)}]` etc.
+
+### The Bangla Enumerated List
+Despite all these, there might be a scenario where you want to use an enumerated list where the numberings are like ১. $\rightarrow$ (ক) and so on. To alleviate this issue, the Bangla enumerate, `bnenum` is introduced, which keeps track of its internal stage and numbering using a Lua backend. To use it, simple use the `\bnenum` environment and instead of `\item`, use `\bnitem`. For example:
+
+```latex
+% Make sure you are in a Bangla environment
+\begin{bnenum}
+    \bnitem \avro{ek}
+    \bnitem \avro{dui}
+    \bnitem \avro{tin}
+    \begin{bnenum}
+        \bnitem \avro{ek}
+        \bnitem \avro{dui}
+        \begin{bnenum}
+            \bnitem \avro{ek}
+            \bnitem \avro{dui}
+            \bnitem \avro{tin}
+        \end{bnenum}
+        \bnitem \avro{tin}
+    \end{bnenum}
+\end{bnenum}
+```
+
+By default, the list follows ১. $\rightarrow$ (ক) $\rightarrow$ (অ) numbering style. You can change it using the `\bnenumformat` command at any time. For instance:
+
+```latex
+% Set the numbering to: ক. -> ১)
+\bnenumformat[b., s)]
+% OR Reset numbering to default: ১. -> (ক) -> (অ)
+\bnenumformat
+```
+
+The command supports the following formats:
+
+| Specifier(s)  | Meaning                       |
+|---------------|-------------------------------|
+| `s or S`      | Bangla integer numbers        |
+| `b`           | Bangla consonant alphabets    |
+| `B`           | Bangla vowel alphabets        |
+| `a`           | English lowercase alphabets*  |
+| `A`           | English uppercase alphabets*  |
+| `i`           | Roman lowercase numerals*     |
+| `I`           | Roman uppercase numerals*     |
+| `n or N`      | English integer numbers*      |
+
+*Format specifiers marked with asterisk (\*) are not recommended without a universal font that supports at least Bangla and English glyphs.*
+
+If you have defined a formatting for two stages and you move the the third stage, the formatting will wrap around and use the first stage formatting again. You can set or reset the formatting at any time you prefer, but you need to supply the formatting for all the desired stages at once.
 
 ## License
 The package `Kothon` (কথন) is released under two different licenses. [`kothon.lua`](./package/kothon.lua) is released under the terms of the Mozilla Public License 2.0. An online copy of the license can be found at [MPL 2.0](https://mozilla.org/MPL/2.0/). Rest of the files are licensed under MIT license. Copies of the license texts are included in [LICENSE](./LICENSE). Copyright (c) 2024 Mohammad Ishrak Abedin.

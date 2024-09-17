@@ -196,3 +196,27 @@
 \newcommand{\bnitem}{%
     \item[\directlua{ tex.print(BNenum:NextValueFormatted()) }]%
 }
+
+%   Use this command to set up the formatting of different stateges
+%   in the bnenum enumerator. Set the style for stage separated by
+%   comma. Meaning of the different symbols are:
+%   s or S  => Bangla integer numbers
+%   b       => Bangla consonant alphabets
+%   B       => Bangla vowel alphabets
+%   a       => English lowercase alphabets*
+%   A       => English uppercase alphabets*
+%   i       => Roman lowercase numerals*
+%   I       => Roman uppercase numerals*
+%   n or N  => English integer numbers*
+%   Format specifiers marked with asterisk (*) are not recommended
+%   without a universal font.
+%
+%   Usage:
+%   % Following sets the first stage to Bangla consonants followed by 
+%   periods
+%   \bnenumformat[b., (s)]
+%   % Following resets the formatting to default s., (b), (B)
+%   \bnenumformat
+\newcommand{\bnenumformat}[1][s., (b), (B)]{%
+    \luaexec{BNenum:SetFormatting(\luastring{#1})}%
+}

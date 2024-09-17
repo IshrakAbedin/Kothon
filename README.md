@@ -172,7 +172,7 @@ The command supports the following formats:
 | `I`           | Roman uppercase numerals*     |
 | `n or N`      | English integer numbers*      |
 
-*Format specifiers marked with asterisk (\*) are not recommended without a universal font that supports at least Bangla and English glyphs.*
+*Format specifiers marked with asterisks (\*) are not recommended without a universal font that supports at least Bangla and English glyphs.*
 
 If you have defined a formatting for two stages and you move the the third stage, the formatting will wrap around and use the first stage formatting again. You can set or reset the formatting at any time you prefer, but you need to supply the formatting for all the desired stages at once.
 

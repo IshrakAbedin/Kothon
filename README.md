@@ -65,7 +65,7 @@ Make sure that you have the required fonts installed in your system (default is 
 ...
 \begin{document}
     You can directly write Bangla, \textbangla{ভাষা হোক উন্মুক্ত}.
-    Or you can use transliteration, \textbangla{\avro{BHasha hOk unmukto.}}
+    Or you can use transliteration, \textbangla{\avro{BhaSHa hOk unmukto.}}
 
     You can also write in an environment:
     \begin{bangla}

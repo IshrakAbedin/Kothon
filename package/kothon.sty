@@ -33,13 +33,24 @@
 
 % LaTeX format Specifier
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{kothon}[2024/09/15 v0.2 LaTeX package that simplifies basic Bangla typesetting and leverages Avro Phonetic typing in LaTeX for writing Bangla]
+\ProvidesPackage{kothon}[2025/01/28 v0.3 LaTeX package that simplifies basic Bangla typesetting and leverages Avro Phonetic typing in LaTeX for writing Bangla]
+
+% Package option for including legal list
+%   [Default: nolegallist]
+%   Usage: \usepackage[legallist]{kothon}
+\newif\ifllist
+\DeclareOption{nolegallist}{\llistfalse}
+\DeclareOption{legallist}{\llisttrue}
+\ExecuteOptions{nolegallist}
+\ProcessOptions\relax
 
 % Required package loading
 \RequirePackage{luacode}
 \RequirePackage{fontspec}
 \RequirePackage{polyglossia}
-\RequirePackage{enumitem}
+\ifllist% As enumitem package may conflict with some classes
+    \RequirePackage{enumitem}
+\fi
 
 % Setting `bangla` as an alias for `bengali`
 \setlanguagealias{bengali}{bangla}
@@ -157,14 +168,20 @@
 %   with Bangla, this list numbers as 1. -> 1.1. -> 1.1.1. -> ...
 %   Ideal hack to be used when Bangla is set as the main font.
 %
+%   [Warning] Some classes like beamer may have conflict with the
+%   enumitem package and cause errors. This is why the legal list
+%   is kept as an optional include with the legallist option.
+%
 %   Usage:
 %       \begin{llist}
 %           \item Item 1 
 %           \item Item 2 
 %           ... 
 %       \end{llist}
-\newlist{llist}{enumerate}{10}
-\setlist[llist]{label*=\arabic*.}
+\ifllist%
+    \newlist{llist}{enumerate}{10}%
+    \setlist[llist]{label*=\arabic*.}%
+\fi
 
 %   A list utilizing Lua backend to generate numbers and alphabets in
 %   Bangla. First levels are Bangla numbers, second levels are Bangla

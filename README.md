@@ -126,7 +126,11 @@ Similarly, for utilizing universal fonts (fonts containing glyphs of both Bangla
 The commands that are provided with this package are written to make typesetting in Bangla easy and simple. But it can be restrictive to granular controls. If even more fine tuning is required, it is advised to directly resort to `fontspec` and `polyglossia` $\mathrm{\LaTeX}$ packages.
 
 ### The Legal List
-While `polyglossia` can translate Arabic numerals to Bangla properly, it does not have support for alphabetic numerals, like a, b, c, d, etc. that are used in nested `enumerate`-like environments. To hack around this, the `llist` or legal list custom enumeration has been introduced. It numbers like $1. \rightarrow 1.1. \rightarrow 1.1.1.$ in different levels. So, if you are using Bangla as the main language, then using the legal list would result in having proper numbering. If you want Bangla alphabets in a list, you can always manually type `\item[\avro{k)}] ... \item[\avro{kh)}]` etc.
+While `polyglossia` can translate Arabic numerals to Bangla properly, it does not have support for alphabetic numerals, like a, b, c, d, etc. that are used in nested `enumerate`-like environments. To hack around this, the `llist` or legal list custom enumeration has been introduced. It numbers like $1. \rightarrow 1.1. \rightarrow 1.1.1.$ in different levels. So, if you are using Bangla as the main language, then using the legal list would result in having proper numbering. If you want Bangla alphabets in a list, you can always manually type `\item[\avro{k)}] ... \item[\avro{kh)}]` etc. The `llist` depends on the `enumitem` package which can conflict with some $\mathrm{\LaTeX}$ classes like `beamer`. As a result, the `llist` is not loaded with the package by default and you can add it by utilizing the `legallist` package option:
+
+```latex
+\usepackage[legallist]{kothon}
+```
 
 ### The Bangla Enumerated List
 Despite all these, there might be a scenario where you want to use an enumerated list where the numberings are like ১. $\rightarrow$ (ক) and so on. To alleviate this issue, the Bangla enumerate, `bnenum` is introduced, which keeps track of its internal stage and numbering using a Lua backend. To use it, simple use the `\bnenum` environment and instead of `\item`, use `\bnitem`. For example:

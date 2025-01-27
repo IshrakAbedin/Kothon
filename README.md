@@ -10,7 +10,7 @@ This package works only with a $\mathrm{Lua}\mathrm{\LaTeX}$ compiler (2020 or a
 - `luacode`
 - `fontspec`
 - `polyglossia`
-- `enumitem`
+- `enumitem` (optional)
 
 Along with that, make sure the necessary/used fonts are installed in your system. By default, the package tries to utilize Google's Noto Family fonts as much as possible, such as `Noto Sans Bengali`, `Noto Serif Bengali`, etc. Along with that, it contains references to GNU's `FreeSans`, `FreeSerif`, `FreeMono` fonts. The choices are based on the direct availability of fonts in [Overleaf](https://www.overleaf.com/learn/latex/XeLaTeX#Fonts_installed_on_Overleaf's_servers:_Google_Noto_fonts), since it is one of the most preferred and commonly used $\mathrm{\LaTeX}$ editors/service.
 
@@ -47,6 +47,8 @@ If you want to use Bangla only at specific places but keep the rest of the docum
 ```latex
 \documentclass ...
 
+\usepackage{kothon}
+
 % with default fonts
 \setbanglaother
 % OR with custom fonts (Make sure the font is present)
@@ -76,18 +78,30 @@ Make sure that you have the required fonts installed in your system (default is 
 
 For the environment or writing commands, `bangla` and `bengali` are interchangable. That is, `\textbengali{...}` will work as well.
 
+#### As a second language with extended fonts
+
+While in most document classes, having the main font set is enough, some classes like `beamer` may try to utilize the sans-serif version of a font. In such cases, write **one of the following** commands:
+
+```latex
+% with default main, sans, and mono fonts
+\setbanglaotherx
+% OR with custom main, sans, and mono fonts for Bangla, the following setup is also the default (Make sure the fonts are present)
+\setbanglaotherx[Noto Serif Bengali][Noto Sans Bengali][Noto Sans Bengali]
+% the command can take a fourth optional argument, fontspec font setup parameters, default is [Renderer=HarfBuzz, Script=Bengali]. If you don't know what these are, don't bother about it.
+```
+
 
 #### As the primary language
 
-If you want to use Bangla as the primary language of your document and English as a second langauge, instead of `\setbanglaother`, in the preamble, write **one of the following** commands:
+If you want to use Bangla as the primary language of your document and English as a second langauge, instead of `\setbanglaother` in the preamble, write **one of the following** commands:
 
 ```latex
 % with default fonts
-\setbanglaother
+\setbanglamain
 % OR with custom fonts for Bangla (Make sure the font is present)
-\setbanglaother[Noto Serif Bengali]
+\setbanglamain[Noto Serif Bengali]
 % OR with custom fonts for Bangla and English (Make sure the fonts are present)
-\setbanglaother[Noto Serif Bengali][Fira Sans]
+\setbanglamain[Noto Serif Bengali][Fira Sans]
 % the command can take a third optional argument, fontspec font setup parameters, default is [Renderer=HarfBuzz, Script=Bengali]. If you don't know what these are, don't bother about it.
 ```
 

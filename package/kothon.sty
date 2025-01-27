@@ -33,7 +33,7 @@
 
 % LaTeX format Specifier
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{kothon}[2025/01/28 v0.3 LaTeX package that simplifies basic Bangla typesetting and leverages Avro Phonetic typing in LaTeX for writing Bangla]
+\ProvidesPackage{kothon}[2025/01/28 v0.4 LaTeX package that simplifies basic Bangla typesetting and leverages Avro Phonetic typing in LaTeX for writing Bangla]
 
 % Package option for including legal list
 %   [Default: nolegallist]
@@ -87,6 +87,30 @@
     \setotherlanguage{bengali}
 }
 
+%   A command similar to the \setbanglaother command with extended
+%   parameters for different types of fonts (main, sans, mono). Suitable
+%   for beamer or other classes where sans-serif fonts are used prominently.
+%
+%   Optional Arg1: Bangla Main font to be used [Default: Noto Serif Bengali]
+%   Optional Arg2: Bangla Sans font to be used [Default: Noto Sans Bengali]
+%   Optional Arg3: Bangla Mono font to be used [Default: Noto Sans Bengali]
+%   Optional Arg4: Additional font parameters
+%   [Default: Renderer=HarfBuzz, Script=Bengali]
+%
+%   Usage: \setbanglaotherx[Noto Serif Bengali][Noto Sans Bengali]
+%   [Noto Sans Bengali]
+\NewDocumentCommand{\setbanglaotherx}{
+    O{Noto Serif Bengali}
+    O{Noto Sans Bengali}
+    O{Noto Sans Bengali}
+    O{Renderer=HarfBuzz, Script=Bengali}
+}{
+    \newfontfamily\bengalifont{#1}[#4]
+    \newfontfamily\bengalifontsf{#2}[#4]
+    \newfontfamily\bengalifonttt{#3}[#4]
+    \setotherlanguage{bengali}
+}
+
 %   A command to set Bangla as the primary language of the document
 %   with English as the second. Everything including document part
 %   and enumeration counter (Arabic only) shifts to Bangla.
@@ -96,7 +120,7 @@
 %
 %   Optional Arg1: Bangla font to be used [Default: Noto Sans Bengali]
 %   Optional Arg2: English font to be used [Default: Latin Modern Roman]
-%   Optional Arg2: Additional font parameters
+%   Optional Arg3: Additional font parameters
 %   [Default: Renderer=HarfBuzz, Script=Bengali]
 %
 %   Usage: \setbanglamain[Noto Serif Bengali][Fira Sans]
@@ -111,8 +135,8 @@
     \setotherlanguage{english}
 }
 
-%   A command to similar to the \setbanglamain command with extended
-%   parameters for different types of fonts (main, serif, mono).
+%   A command similar to the \setbanglamain command with extended
+%   parameters for different types of fonts (main, sans, mono).
 %
 %   Optional Arg1: Bangla Main font to be used [Default: Noto Serif Bengali]
 %   Optional Arg2: Bangla Sans font to be used [Default: Noto Sans Bengali]
@@ -138,8 +162,8 @@
     \setotherlanguage{english}
 }
 
-%   A command to similar to the \setbanglamain command with universal
-%   font support for different types of fonts (main, serif, mono).
+%   A command similar to the \setbanglamain command with universal
+%   font support for different types of fonts (main, sans, mono).
 %
 %   Optional Arg1: Main font to be used [Default: FreeSerif]
 %   Optional Arg2: Sans font to be used [Default: FreeSans]
